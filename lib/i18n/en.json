@@ -1,0 +1,263 @@
+{
+  "nav": {
+    "logo": "BizDoc AI",
+    "quote": "Quote",
+    "invoice": "Invoice",
+    "email": "Email",
+    "dashboard": "History",
+    "pricing": "Pricing",
+    "login": "Log In",
+    "account": "Account",
+    "logout": "Log Out",
+    "quotaLabel": "uses/mo",
+    "tools": "Tools"
+  },
+  "home": {
+    "hero": {
+      "title": "AI Document Assistant for Small Businesses",
+      "subtitle": "Generate quotes, invoices, payment reminders, and client emails in seconds.",
+      "ctaStart": "Start for Free",
+      "ctaQuote": "Generate a Quote",
+      "ctaPricing": "View Pricing"
+    },
+    "features": {
+      "title": "Core Features",
+      "subtitle": "Three tools covering the most common business document needs",
+      "quote": {
+        "title": "Quote Generator",
+        "desc": "Create professional quotes from simple business details, in English or Chinese."
+      },
+      "invoice": {
+        "title": "Invoice Generator",
+        "desc": "Generate clean invoices with payment terms, item details, and tax calculations."
+      },
+      "email": {
+        "title": "Business Email Generator",
+        "desc": "Write payment reminders, follow-ups, and client emails instantly with the right tone."
+      }
+    },
+    "stats": {
+      "free": "5 free / month",
+      "ai": "AI powered",
+      "bilingual": "Bilingual"
+    },
+    "cta": {
+      "title": "Start today, no credit card required",
+      "subtitle": "Sign up free and get 5 document generations per month.",
+      "btn": "Sign Up Free"
+    }
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Free users get 5 generations per month. Upgrade to Pro for more usage, full history, and PDF export.",
+    "monthly": "/month",
+    "popular": "Most Popular",
+    "tiers": {
+      "free": {
+        "name": "Free",
+        "price": "$0",
+        "desc": "For individuals who use it occasionally",
+        "features": [
+          "5 generations / month",
+          "Copy results",
+          "Last 3 history items",
+          "Watermarked PDF export"
+        ],
+        "cta": "Get Started"
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$9",
+        "desc": "For freelancers and small studios",
+        "features": [
+          "100 generations / month",
+          "Full generation history",
+          "Clean PDF export (no watermark)",
+          "Company profile auto-fill",
+          "Priority support"
+        ],
+        "cta": "Upgrade to Pro"
+      },
+      "business": {
+        "name": "Business",
+        "price": "$19",
+        "desc": "For small businesses and teams",
+        "features": [
+          "500 generations / month",
+          "Full generation history",
+          "Clean PDF export (no watermark)",
+          "Company profile auto-fill",
+          "Custom templates (coming soon)"
+        ],
+        "cta": "Upgrade to Business"
+      }
+    },
+    "upgradeNote": "To upgrade: send payment via PayPal, then contact support with your registered email.",
+    "upgradeNoteIntl": "Domestic users: WeChat or Alipay transfer, then contact support.",
+    "contact": "Contact Support",
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "How do I upgrade?",
+      "a1": "Send payment via PayPal to our support account, include your registered email, and we'll activate your plan within 24 hours.",
+      "q2": "Does the quota reset monthly?",
+      "a2": "Yes, your generation quota resets automatically each month on a fixed date.",
+      "q3": "Can I get a refund?",
+      "a3": "If you're not satisfied, contact support within 7 days of purchase for a full refund."
+    }
+  },
+  "login": {
+    "title": "Welcome to BizDoc AI",
+    "loginTab": "Log In",
+    "registerTab": "Sign Up",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Your name",
+    "loginBtn": "Log In",
+    "registerBtn": "Sign Up",
+    "googleBtn": "Continue with Google",
+    "orDivider": "or",
+    "forgotPassword": "Forgot password?",
+    "checkEmail": "Check your email and click the confirmation link to complete sign-up.",
+    "errors": {
+      "invalidCredentials": "Invalid email or password. Please try again.",
+      "emailInUse": "This email is already registered.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "generating": "AI is generating your document...",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "exportPdf": "Export PDF",
+    "regenerate": "Regenerate",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "noData": "No data",
+    "upgradeRequired": "Upgrade to Pro to use this feature",
+    "upgradeCta": "Upgrade Now",
+    "quotaExhausted": "Monthly quota exhausted. Please upgrade to continue.",
+    "error": "Something went wrong. Please try again.",
+    "loginRequired": "Please log in to use this feature",
+    "loginCta": "Log In",
+    "backToHome": "Back to Home"
+  },
+  "tools": {
+    "outputLanguage": "Output Language",
+    "outputLangZh": "Chinese",
+    "outputLangEn": "English",
+    "addItem": "+ Add Item",
+    "removeItem": "Remove",
+    "itemName": "Name",
+    "itemDesc": "Description (optional)",
+    "itemQty": "Qty",
+    "itemPrice": "Unit Price",
+    "itemAmount": "Amount",
+    "switchToText": "Switch to text description mode",
+    "switchToRows": "Switch to manual input mode",
+    "textModeHint": "Describe your items in plain text, e.g. \"3 office desks at $500 each; 6 chairs at $200 each\"",
+    "textModeLabel": "Item Description",
+    "generate": "Generate",
+    "resultTitle": "Generated Result",
+    "quotaRemaining": "Remaining this month"
+  },
+  "quote": {
+    "pageTitle": "Quote Generator",
+    "pageDesc": "Enter your details and AI will generate a professional quote",
+    "companyName": "Your Company Name",
+    "clientName": "Client Name",
+    "currency": "Currency",
+    "deliveryTime": "Delivery Time",
+    "validUntil": "Quote Valid Until",
+    "notes": "Notes",
+    "generateBtn": "Generate Quote",
+    "currencies": ["USD - US Dollar", "EUR - Euro", "GBP - British Pound", "CNY - Chinese Yuan", "HKD - Hong Kong Dollar"]
+  },
+  "invoice": {
+    "pageTitle": "Invoice Generator",
+    "pageDesc": "Generate a professional invoice with payment terms",
+    "sellerName": "Seller Name",
+    "buyerName": "Buyer / Client Name",
+    "invoiceNumber": "Invoice Number",
+    "issueDate": "Issue Date",
+    "dueDate": "Due Date",
+    "taxRate": "Tax Rate (optional, e.g. 10 for 10%)",
+    "paymentMethod": "Payment Method",
+    "notes": "Notes",
+    "generateBtn": "Generate Invoice",
+    "autoNumberHint": "Auto-suggested next number"
+  },
+  "email": {
+    "pageTitle": "Business Email Generator",
+    "pageDesc": "Choose the email type, enter key points, and AI writes the email",
+    "emailType": "Email Type",
+    "emailTypes": {
+      "quote": "Quote Email",
+      "payment_reminder": "Payment Reminder",
+      "follow_up": "Follow-up",
+      "delivery": "Project Delivery",
+      "apology": "Apology",
+      "cooperation": "Partnership Invitation",
+      "confirmation": "Client Confirmation"
+    },
+    "recipientName": "Recipient Name",
+    "senderRole": "Your Role / Company",
+    "purpose": "Email Purpose",
+    "keyMessage": "Key Message / Points",
+    "tone": "Tone",
+    "tones": {
+      "formal": "Formal",
+      "friendly": "Friendly",
+      "concise": "Concise"
+    },
+    "generateBtn": "Generate Email",
+    "tabs": {
+      "body": "Full Email",
+      "short": "Short Version",
+      "formal": "Formal Version"
+    },
+    "subject": "Subject Line"
+  },
+  "dashboard": {
+    "title": "Generation History",
+    "filterAll": "All",
+    "filterQuote": "Quotes",
+    "filterInvoice": "Invoices",
+    "filterEmail": "Emails",
+    "searchPlaceholder": "Search history...",
+    "viewBtn": "View",
+    "exportBtn": "Export",
+    "dateLabel": "Date",
+    "typeLabel": "Type",
+    "freeLimit": "Free plan shows only the last 3 records. Upgrade to Pro for full history.",
+    "emptyState": "No generations yet. Try one of the tools!",
+    "emptyStateCta": "Get Started"
+  },
+  "account": {
+    "title": "Account Settings",
+    "plan": "Current Plan",
+    "planFree": "Free",
+    "planPro": "Pro",
+    "planBusiness": "Business",
+    "quotaUsed": "Used This Month",
+    "quotaMonthly": "Monthly Limit",
+    "quotaNext": "Next Reset",
+    "expiresAt": "Plan Expires",
+    "neverExpires": "Never",
+    "companyProfile": "Company Profile",
+    "companyProfileDesc": "Save once, auto-fill into all tool forms",
+    "clients": "Client List",
+    "upgradeTitle": "Upgrade Plan",
+    "upgradeNote": "Send payment via PayPal and contact support with your registered email to activate.",
+    "locale": "Interface Language",
+    "changeLocale": "Switch Language"
+  }
+}

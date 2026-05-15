@@ -1,0 +1,263 @@
+{
+  "nav": {
+    "logo": "企文助手",
+    "quote": "报价单",
+    "invoice": "Invoice",
+    "email": "商务邮件",
+    "dashboard": "历史记录",
+    "pricing": "价格",
+    "login": "登录",
+    "account": "账户",
+    "logout": "退出登录",
+    "quotaLabel": "次/月",
+    "tools": "工具"
+  },
+  "home": {
+    "hero": {
+      "title": "小企业 AI 文书工具箱",
+      "subtitle": "自动生成报价单、Invoice、商务邮件和客户跟进内容，帮小公司减少重复文书工作。",
+      "ctaStart": "免费开始",
+      "ctaQuote": "生成报价单",
+      "ctaPricing": "查看价格"
+    },
+    "features": {
+      "title": "核心功能",
+      "subtitle": "三个工具，覆盖小企业最常用的商务文书场景",
+      "quote": {
+        "title": "报价单生成器",
+        "desc": "输入服务和价格，自动生成专业报价单，支持中英文输出。"
+      },
+      "invoice": {
+        "title": "Invoice 生成器",
+        "desc": "快速生成可复制、可导出的 Invoice，支持含税计算。"
+      },
+      "email": {
+        "title": "商务邮件生成器",
+        "desc": "自动生成报价、催款、跟进和客户确认邮件，多种语气可选。"
+      }
+    },
+    "stats": {
+      "free": "免费 5 次/月",
+      "ai": "AI 驱动生成",
+      "bilingual": "中英双语支持"
+    },
+    "cta": {
+      "title": "立即开始，免费使用",
+      "subtitle": "无需信用卡，注册即可获得每月 5 次免费生成次数。",
+      "btn": "免费注册"
+    }
+  },
+  "pricing": {
+    "title": "选择适合你的方案",
+    "subtitle": "免费版每月可生成 5 次。升级 Pro 后可获得更多生成次数、历史记录和 PDF 导出功能。",
+    "monthly": "/月",
+    "popular": "最受欢迎",
+    "tiers": {
+      "free": {
+        "name": "免费版",
+        "price": "¥0",
+        "desc": "适合偶尔使用的个人用户",
+        "features": [
+          "每月 5 次生成",
+          "可复制生成结果",
+          "最近 3 条历史记录",
+          "PDF 带水印导出"
+        ],
+        "cta": "免费开始"
+      },
+      "pro": {
+        "name": "Pro 版",
+        "price": "¥39",
+        "desc": "适合个人和小工作室",
+        "features": [
+          "每月 100 次生成",
+          "完整历史记录",
+          "无水印 PDF 导出",
+          "公司资料自动填充",
+          "优先支持"
+        ],
+        "cta": "升级 Pro"
+      },
+      "business": {
+        "name": "企业版",
+        "price": "¥99",
+        "desc": "适合小公司和团队",
+        "features": [
+          "每月 500 次生成",
+          "完整历史记录",
+          "无水印 PDF 导出",
+          "公司资料自动填充",
+          "自定义模板（即将推出）"
+        ],
+        "cta": "升级企业版"
+      }
+    },
+    "upgradeNote": "升级方式：微信或支付宝转账后联系客服开通。",
+    "upgradeNoteIntl": "海外用户：PayPal 付款后联系客服开通。",
+    "contact": "联系客服",
+    "faq": {
+      "title": "常见问题",
+      "q1": "如何升级？",
+      "a1": "微信或支付宝转账至客服账号，告知你的注册邮箱，客服将在 24 小时内为你开通。",
+      "q2": "次数是按月重置吗？",
+      "a2": "是的，每月固定日期自动重置生成次数。",
+      "q3": "可以申请退款吗？",
+      "a3": "如果对服务不满意，可在购买后 7 天内联系客服申请退款。"
+    }
+  },
+  "login": {
+    "title": "欢迎使用企文助手",
+    "loginTab": "登录",
+    "registerTab": "注册",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "your@email.com",
+    "passwordLabel": "密码",
+    "passwordPlaceholder": "至少 6 位字符",
+    "nameLabel": "姓名",
+    "namePlaceholder": "你的姓名",
+    "loginBtn": "登录",
+    "registerBtn": "注册",
+    "googleBtn": "使用 Google 登录",
+    "orDivider": "或",
+    "forgotPassword": "忘记密码？",
+    "checkEmail": "请查收邮件，点击确认链接完成注册。",
+    "errors": {
+      "invalidCredentials": "邮箱或密码错误，请重试",
+      "emailInUse": "该邮箱已被注册",
+      "weakPassword": "密码至少需要 6 位字符",
+      "generic": "出现错误，请重试"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "generating": "AI 生成中，请稍候...",
+    "copy": "复制",
+    "copied": "已复制！",
+    "exportPdf": "导出 PDF",
+    "regenerate": "重新生成",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "add": "添加",
+    "search": "搜索",
+    "noData": "暂无数据",
+    "upgradeRequired": "该功能需要升级到 Pro 版",
+    "upgradeCta": "立即升级",
+    "quotaExhausted": "本月生成次数已用完，请升级会员继续使用",
+    "error": "出现错误，请重试",
+    "loginRequired": "请先登录后再使用此功能",
+    "loginCta": "前往登录",
+    "backToHome": "返回首页"
+  },
+  "tools": {
+    "outputLanguage": "输出语言",
+    "outputLangZh": "中文",
+    "outputLangEn": "英文",
+    "addItem": "+ 添加项目",
+    "removeItem": "删除",
+    "itemName": "名称",
+    "itemDesc": "描述（可选）",
+    "itemQty": "数量",
+    "itemPrice": "单价",
+    "itemAmount": "金额",
+    "switchToText": "切换为文字描述模式",
+    "switchToRows": "切换为手动输入模式",
+    "textModeHint": "用文字描述你的商品或服务，例如：\"办公桌 3 张，¥500/张；椅子 6 把，¥200/把\"",
+    "textModeLabel": "商品/服务描述",
+    "generate": "生成",
+    "resultTitle": "生成结果",
+    "quotaRemaining": "本月剩余次数"
+  },
+  "quote": {
+    "pageTitle": "报价单生成器",
+    "pageDesc": "输入基础信息，AI 自动生成专业报价单",
+    "companyName": "你的公司名称",
+    "clientName": "客户名称",
+    "currency": "币种",
+    "deliveryTime": "交付时间",
+    "validUntil": "报价有效期至",
+    "notes": "备注",
+    "generateBtn": "生成报价单",
+    "currencies": ["CNY - 人民币", "USD - 美元", "EUR - 欧元", "GBP - 英镑", "HKD - 港元"]
+  },
+  "invoice": {
+    "pageTitle": "Invoice 生成器",
+    "pageDesc": "快速生成专业 Invoice，支持含税计算",
+    "sellerName": "卖方名称",
+    "buyerName": "买方名称",
+    "invoiceNumber": "Invoice 编号",
+    "issueDate": "开票日期",
+    "dueDate": "到期日期",
+    "taxRate": "税率（可选，如 10 表示 10%）",
+    "paymentMethod": "付款方式",
+    "notes": "备注",
+    "generateBtn": "生成 Invoice",
+    "autoNumberHint": "自动推荐下一个编号"
+  },
+  "email": {
+    "pageTitle": "商务邮件生成器",
+    "pageDesc": "选择邮件类型，输入要点，AI 生成专业邮件",
+    "emailType": "邮件类型",
+    "emailTypes": {
+      "quote": "报价邮件",
+      "payment_reminder": "催款邮件",
+      "follow_up": "客户跟进",
+      "delivery": "项目交付",
+      "apology": "道歉邮件",
+      "cooperation": "合作邀约",
+      "confirmation": "客户确认"
+    },
+    "recipientName": "收件人称呼",
+    "senderRole": "你的身份/公司",
+    "purpose": "邮件目的",
+    "keyMessage": "主要内容要点",
+    "tone": "语气风格",
+    "tones": {
+      "formal": "正式",
+      "friendly": "友好",
+      "concise": "简洁"
+    },
+    "generateBtn": "生成邮件",
+    "tabs": {
+      "body": "完整邮件",
+      "short": "简洁版",
+      "formal": "正式版"
+    },
+    "subject": "邮件主题"
+  },
+  "dashboard": {
+    "title": "历史记录",
+    "filterAll": "全部",
+    "filterQuote": "报价单",
+    "filterInvoice": "Invoice",
+    "filterEmail": "邮件",
+    "searchPlaceholder": "搜索历史记录...",
+    "viewBtn": "查看",
+    "exportBtn": "导出",
+    "dateLabel": "时间",
+    "typeLabel": "类型",
+    "freeLimit": "免费版仅显示最近 3 条记录，升级 Pro 查看全部",
+    "emptyState": "还没有生成记录，去试试工具吧！",
+    "emptyStateCta": "立即开始"
+  },
+  "account": {
+    "title": "账户设置",
+    "plan": "当前方案",
+    "planFree": "免费版",
+    "planPro": "Pro 版",
+    "planBusiness": "企业版",
+    "quotaUsed": "本月已使用",
+    "quotaMonthly": "每月限额",
+    "quotaNext": "下次重置",
+    "expiresAt": "会员到期",
+    "neverExpires": "永不过期",
+    "companyProfile": "公司资料",
+    "companyProfileDesc": "保存一次，自动填充到所有工具表单",
+    "clients": "客户列表",
+    "upgradeTitle": "升级方案",
+    "upgradeNote": "微信或支付宝转账后联系客服，告知注册邮箱即可开通。",
+    "locale": "界面语言",
+    "changeLocale": "切换语言"
+  }
+}
