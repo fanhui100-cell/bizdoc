@@ -17,6 +17,7 @@ export default function Navbar({ locale, dict }: NavbarProps) {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [quota, setQuota] = useState<{ used: number; monthly: number } | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -26,6 +27,18 @@ export default function Navbar({ locale, dict }: NavbarProps) {
     })
     return () => subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (!user) { setQuota(null); return }
+    supabase
+      .from('users_profile')
+      .select('quota_used, quota_monthly')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) setQuota({ used: data.quota_used, monthly: data.quota_monthly })
+      })
+  }, [user])
 
   const otherLocale: Locale = locale === 'zh' ? 'en' : 'zh'
   const otherLocalePath = pathname.replace(`/${locale}`, `/${otherLocale}`)
@@ -87,6 +100,12 @@ export default function Navbar({ locale, dict }: NavbarProps) {
 
             {user ? (
               <>
+                {quota && (
+                  <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 border border-indigo-200">
+                    {Math.max(0, quota.monthly - quota.used)}&thinsp;/&thinsp;{quota.monthly}
+                    <span className="text-indigo-400">{dict.nav.quotaLabel}</span>
+                  </span>
+                )}
                 <Link
                   href={`/${locale}/dashboard`}
                   className="hidden sm:block text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100"

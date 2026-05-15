@@ -5,8 +5,12 @@ import './globals.css'
 const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 
 export const metadata: Metadata = {
-  title: 'BizDoc AI / 企文助手',
-  description: 'AI document assistant for small businesses',
+  title: {
+    default: 'BizDoc AI / 企文助手',
+    template: '%s | BizDoc AI',
+  },
+  description: 'AI-powered quote, invoice and business email generator for small businesses.',
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

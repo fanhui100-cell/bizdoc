@@ -99,3 +99,62 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION handle_new_user();
+
+-- ============================================================
+-- RPC: atomic quota consume (reset if expired → check → decrement in one tx)
+-- Uses auth.uid() internally — no caller-supplied user id accepted.
+-- Returns jsonb: { ok, used, monthly, remaining } or { ok:false, error }.
+-- ============================================================
+CREATE OR REPLACE FUNCTION consume_quota()
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER AS $$
+DECLARE
+  v_uid      uuid := auth.uid();
+  v_monthly  int;
+  v_used     int;
+  v_reset_at timestamptz;
+BEGIN
+  IF v_uid IS NULL THEN
+    RETURN jsonb_build_object('ok', false, 'error', 'unauthenticated');
+  END IF;
+
+  SELECT quota_monthly, quota_used, quota_reset_at
+  INTO   v_monthly, v_used, v_reset_at
+  FROM   users_profile
+  WHERE  id = v_uid
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'error', 'profile_not_found');
+  END IF;
+
+  -- Lazy reset: if the monthly window has passed, restart the counter
+  IF v_reset_at <= now() THEN
+    v_used := 0;
+    UPDATE users_profile
+    SET    quota_used = 0,
+           quota_reset_at = now() + interval '1 month'
+    WHERE  id = v_uid;
+  END IF;
+
+  IF v_used >= v_monthly THEN
+    RETURN jsonb_build_object(
+      'ok',        false,
+      'error',     'quota_exceeded',
+      'used',      v_used,
+      'monthly',   v_monthly,
+      'remaining', 0
+    );
+  END IF;
+
+  UPDATE users_profile
+  SET    quota_used = v_used + 1
+  WHERE  id = v_uid;
+
+  RETURN jsonb_build_object(
+    'ok',        true,
+    'used',      v_used + 1,
+    'monthly',   v_monthly,
+    'remaining', v_monthly - v_used - 1
+  );
+END;
+$$;

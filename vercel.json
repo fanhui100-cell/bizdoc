@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "app/api/pdf/[id]/route.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    },
+    "app/api/generate/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
