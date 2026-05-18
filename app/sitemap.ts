@@ -8,6 +8,7 @@ const routes = [
   '/tools/invoice',
   '/tools/email',
   '/pricing',
+  '/checkout',
   '/dashboard',
 ]
 
