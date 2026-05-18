@@ -109,13 +109,13 @@
         "cta": "Upgrade to Business"
       }
     },
-    "upgradeNote": "To upgrade: send payment via PayPal, then contact support with your registered email.",
-    "upgradeNoteIntl": "Domestic users: WeChat or Alipay transfer, then contact support.",
+    "upgradeNote": "To upgrade: scan WeChat Pay or Alipay, then contact support with your registered email and payment note.",
+    "upgradeNoteIntl": "Manual confirmation is used now. Automatic activation will be added after official merchant payment callbacks are connected.",
     "contact": "Contact Support",
     "faq": {
       "title": "Frequently Asked Questions",
       "q1": "How do I upgrade?",
-      "a1": "Send payment via PayPal to our support account, include your registered email, and we'll activate your plan within 24 hours.",
+      "a1": "Scan WeChat Pay or Alipay, include your registered email in the payment note, and contact support. We'll activate your plan within 24 hours after verification.",
       "q2": "Does the quota reset monthly?",
       "a2": "Yes, your generation quota resets automatically each month on a fixed date.",
       "q3": "Can I get a refund?",

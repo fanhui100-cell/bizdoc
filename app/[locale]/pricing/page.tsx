@@ -13,6 +13,7 @@ export default async function PricingPage({ params }: Props) {
   if (!isValidLocale(locale)) notFound()
   const dict = await getDictionary(locale)
   const t = dict.pricing
+  const zh = locale === 'zh'
 
   const tiers = [
     {
@@ -127,6 +128,63 @@ export default async function PricingPage({ params }: Props) {
               </div>
             )
           })}
+        </div>
+
+        {/* Manual QR payment */}
+        <div className="mb-12 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+                {zh ? '微信 / 支付宝扫码付款' : 'WeChat Pay / Alipay QR Payment'}
+              </p>
+              <h2 className="mt-2 text-2xl font-bold text-gray-900">
+                {zh ? '付款后人工确认，再为你开通套餐。' : 'Pay by QR code, then we activate your plan manually.'}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-gray-500">
+                {zh
+                  ? '请先选择 Pro 或 Business 套餐，扫码付款时备注注册邮箱。付款完成后联系客服或在邮件里提供注册邮箱、付款时间和付款人信息，我们核对到账后通常会在 24 小时内开通。'
+                  : 'Choose Pro or Business, scan the QR code, and include your registered email in the payment note. After payment, contact support with your email, payment time, and payer name. We usually activate the plan within 24 hours after verification.'}
+              </p>
+              <ol className="mt-5 grid gap-3 text-sm text-gray-600">
+                {(zh
+                  ? [
+                      '选择套餐并扫码付款。',
+                      '付款备注填写注册邮箱。',
+                      '联系客服并提供付款时间、付款人信息或截图说明。',
+                      '人工核对后开通套餐；后续会接入微信/支付宝商户回调，实现付款成功后自动开通。',
+                    ]
+                  : [
+                      'Choose a plan and scan the QR code.',
+                      'Put your registered email in the payment note.',
+                      'Contact support with the payment time, payer name, or screenshot note.',
+                      'Manual activation for now; later we will connect official payment webhooks for automatic activation.',
+                    ]
+                ).map((step, index) => (
+                  <li key={step} className="flex gap-3">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
+                      {index + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: zh ? '微信支付' : 'WeChat Pay', src: '/pay/wechat-pay.png' },
+                { label: zh ? '支付宝' : 'Alipay', src: '/pay/alipay-pay.png' },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-gray-200 bg-gray-50 p-3 text-center">
+                  <img
+                    src={item.src}
+                    alt={item.label}
+                    className="aspect-[1/1.25] w-full rounded-lg bg-white object-contain"
+                  />
+                  <p className="mt-2 text-sm font-semibold text-gray-800">{item.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Upgrade instructions */}
