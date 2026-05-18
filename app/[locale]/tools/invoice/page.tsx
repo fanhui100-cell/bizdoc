@@ -1,8 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { OutputCard } from '@/components/tools/output-card'
+import { ClientSuggestInput } from '@/components/ui/client-suggest-input'
+import { FileExtractButton } from '@/components/ui/file-extract-button'
+import { TemplatePicker } from '@/components/ui/template-picker'
 import type { InvoiceOutput } from '@/lib/types'
 
 interface LineItem {
@@ -10,6 +13,11 @@ interface LineItem {
   description: string
   quantity: number
   unitPrice: number
+}
+
+interface SelectedClient {
+  id: string
+  email: string | null
 }
 
 function emptyItem(): LineItem {
@@ -23,11 +31,13 @@ export default function InvoicePage() {
   const params = useParams()
   const locale = (params.locale as string) ?? 'zh'
   const router = useRouter()
+  const searchParams = useSearchParams()
   const zh = locale === 'zh'
 
   const [outputLang, setOutputLang] = useState<'zh' | 'en'>(zh ? 'zh' : 'en')
   const [sellerName, setSellerName] = useState('')
   const [buyerName, setBuyerName] = useState('')
+  const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [invoiceNumber, setInvoiceNumber] = useState(`INV-${Date.now().toString().slice(-6)}`)
   const [issueDate, setIssueDate] = useState(today())
   const [dueDate, setDueDate] = useState(inDays(30))
@@ -42,6 +52,7 @@ export default function InvoicePage() {
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState<InvoiceOutput | null>(null)
   const [genId, setGenId] = useState<string | null>(null)
+  const [lastInput, setLastInput] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -56,8 +67,70 @@ export default function InvoicePage() {
       .catch(() => {})
   }, [])
 
+  useEffect(() => {
+    const fromId = searchParams.get('from')
+    if (!fromId) return
+    fetch(`/api/generations/${fromId}`)
+      .then((r) => r.json())
+      .then(({ generation }) => {
+        if (!generation || generation.tool_type !== 'invoice') return
+        const d = generation.input_data as Record<string, unknown>
+        if (d.sellerName)    setSellerName(d.sellerName as string)
+        if (d.buyerName)     setBuyerName(d.buyerName as string)
+        if (d.currency)      setCurrency(d.currency as string)
+        if (d.taxRate)       setTaxRate(Number(d.taxRate))
+        if (d.paymentMethod) setPaymentMethod(d.paymentMethod as string)
+        if (d.notes)         setNotes(d.notes as string)
+        if (d.itemsText)     { setItemsText(d.itemsText as string); setTextMode(true) }
+        else if (Array.isArray(d.items) && d.items.length > 0) setItems(d.items as LineItem[])
+        if (d.outputLanguage) setOutputLang(d.outputLanguage as 'zh' | 'en')
+        if (generation.client_id) setSelectedClient({ id: generation.client_id as string, email: null })
+      })
+      .catch(() => {})
+  }, [searchParams])
+
+  // Pre-fill from a quote generation (?fromQuote=<id>) — maps quote fields → invoice fields
+  useEffect(() => {
+    const fromQuoteId = searchParams.get('fromQuote')
+    if (!fromQuoteId) return
+    fetch(`/api/generations/${fromQuoteId}`)
+      .then((r) => r.json())
+      .then(({ generation }) => {
+        if (!generation || generation.tool_type !== 'quote') return
+        const d = generation.input_data as Record<string, unknown>
+        if (d.companyName)   setSellerName(d.companyName as string)
+        if (d.clientName)    setBuyerName(d.clientName as string)
+        if (d.currency)      setCurrency(d.currency as string)
+        if (d.notes)         setNotes(d.notes as string)
+        if (d.itemsText)     { setItemsText(d.itemsText as string); setTextMode(true) }
+        else if (Array.isArray(d.items) && d.items.length > 0) setItems(d.items as LineItem[])
+        if (d.outputLanguage) setOutputLang(d.outputLanguage as 'zh' | 'en')
+        if (generation.client_id) setSelectedClient({ id: generation.client_id as string, email: null })
+      })
+      .catch(() => {})
+  }, [searchParams])
+
   const updateItem = (i: number, field: keyof LineItem, value: string | number) => {
     setItems((prev) => prev.map((item, idx) => (idx === i ? { ...item, [field]: value } : item)))
+  }
+
+  const applyExtracted = (data: Record<string, unknown>) => {
+    if (data.sellerName)    setSellerName(data.sellerName as string)
+    if (data.buyerName)     setBuyerName(data.buyerName as string)
+    if (data.invoiceNumber) setInvoiceNumber(data.invoiceNumber as string)
+    if (data.currency)      setCurrency(data.currency as string)
+    if (data.paymentMethod) setPaymentMethod(data.paymentMethod as string)
+    if (data.paymentTerms)  setPaymentMethod(data.paymentTerms as string)
+    if (data.notes)         setNotes(data.notes as string)
+    if (Array.isArray(data.items) && data.items.length > 0) {
+      setTextMode(false)
+      setItems((data.items as Record<string, unknown>[]).map((it) => ({
+        name:        String(it.name ?? ''),
+        description: String(it.description ?? ''),
+        quantity:    Number(it.quantity ?? 1),
+        unitPrice:   Number(it.unitPrice ?? 0),
+      })))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,7 +158,11 @@ export default function InvoicePage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ toolType: 'invoice', input }),
+        body: JSON.stringify({
+          toolType: 'invoice',
+          input,
+          ...(selectedClient ? { clientId: selectedClient.id } : {}),
+        }),
       })
 
       if (res.status === 401) { router.push(`/${locale}/login`); return }
@@ -101,6 +178,8 @@ export default function InvoicePage() {
 
       setOutput(data.output as InvoiceOutput)
       setGenId(data.id ?? null)
+      setLastInput(input as Record<string, unknown>)
+      window.dispatchEvent(new CustomEvent('quotaUpdated'))
     } catch {
       setError(zh ? '网络错误，请重试' : 'Network error. Please try again.')
     } finally {
@@ -110,11 +189,26 @@ export default function InvoicePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{zh ? 'Invoice 生成器' : 'Invoice Generator'}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {zh ? '快速生成专业 Invoice，支持含税计算' : 'Generate a professional invoice with optional tax calculation.'}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{zh ? 'Invoice 生成器' : 'Invoice Generator'}</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {zh ? '快速生成专业 Invoice，支持含税计算' : 'Generate a professional invoice with optional tax calculation.'}
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <TemplatePicker toolType="invoice" onLoad={applyExtracted} zh={zh} />
+            <FileExtractButton toolType="invoice" onExtracted={applyExtracted} zh={zh} />
+          </div>
+          <a
+            href="/api/templates/invoice"
+            download
+            className="text-xs text-gray-400 hover:text-indigo-600 hover:underline"
+          >
+            {zh ? '下载空白模板' : 'Blank template'}
+          </a>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -137,11 +231,16 @@ export default function InvoicePage() {
             <input value={sellerName} onChange={(e) => setSellerName(e.target.value)} required
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? '买方名称' : 'Buyer'}</label>
-            <input value={buyerName} onChange={(e) => setBuyerName(e.target.value)} required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
+          <ClientSuggestInput
+            value={buyerName}
+            onChange={(value) => {
+              setBuyerName(value)
+              setSelectedClient(null)
+            }}
+            onClientSelected={(client) => setSelectedClient(client ? { id: client.id, email: client.email } : null)}
+            label={zh ? '买方名称' : 'Buyer / Client Name'}
+            placeholder={zh ? '输入或从客户列表中选择' : 'Type or select from client book'}
+          />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? 'Invoice 编号' : 'Invoice #'}</label>
             <input value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} required
@@ -234,7 +333,8 @@ export default function InvoicePage() {
       {output && (
         <OutputCard toolType="invoice" output={output}
           copyLabel={zh ? '复制' : 'Copy'} copiedLabel={zh ? '已复制！' : 'Copied!'}
-          pdfLabel={zh ? '导出 PDF' : 'Export PDF'} genId={genId} />
+          pdfLabel={zh ? '导出 PDF' : 'Export PDF'} genId={genId}
+          zh={zh} inputData={lastInput ?? undefined} defaultRecipient={selectedClient?.email ?? ''} />
       )}
     </div>
   )

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bizdoc.ai'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bizdoc-ai.com'
 
 const routes = [
   '',

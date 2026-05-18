@@ -12,6 +12,7 @@ interface Client {
   phone: string | null
   notes: string | null
   created_at: string
+  portal_token: string | null
 }
 
 const EMPTY_FORM = { name: '', email: '', company: '', phone: '', notes: '' }
@@ -34,6 +35,14 @@ export default function ClientsPage() {
       .then(({ clients }) => setClients(clients ?? []))
       .finally(() => setLoading(false))
   }, [])
+
+  const handleCopyPortalLink = (token: string | null) => {
+    if (!token) return
+    const url = `${window.location.origin}/portal/${token}`
+    navigator.clipboard.writeText(url).then(() => {
+      alert(zh ? '门户链接已复制！' : 'Portal link copied!')
+    })
+  }
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -196,13 +205,24 @@ export default function ClientsPage() {
                   <p className="text-xs text-gray-400 truncate max-w-sm">{c.notes}</p>
                 )}
               </div>
-              <button
-                onClick={() => handleDelete(c.id)}
-                disabled={deletingId === c.id}
-                className="ml-4 shrink-0 text-xs text-red-500 hover:text-red-700 disabled:opacity-40"
-              >
-                {deletingId === c.id ? '…' : (zh ? '删除' : 'Delete')}
-              </button>
+              <div className="ml-4 shrink-0 flex items-center gap-2">
+                {c.portal_token && (
+                  <button
+                    onClick={() => handleCopyPortalLink(c.portal_token)}
+                    className="text-xs text-indigo-500 hover:text-indigo-700"
+                    title={zh ? '复制门户链接' : 'Copy portal link'}
+                  >
+                    {zh ? '门户' : 'Portal'}
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  disabled={deletingId === c.id}
+                  className="text-xs text-red-500 hover:text-red-700 disabled:opacity-40"
+                >
+                  {deletingId === c.id ? '…' : (zh ? '删除' : 'Delete')}
+                </button>
+              </div>
             </div>
           ))}
         </div>

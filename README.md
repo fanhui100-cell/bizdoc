@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BizDoc AI
 
-## Getting Started
+AI document assistant for small businesses. It generates quotes, invoices, and business emails, then lets users export PDF files, send documents to clients, track quote acceptance, manage clients, and use API keys on the Business plan.
 
-First, run the development server:
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Required:
 
-## Learn More
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+ANTHROPIC_API_KEY=
+NEXT_PUBLIC_SITE_URL=https://bizdoc-ai.com
+```
 
-To learn more about Next.js, take a look at the following resources:
+Optional:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+RESEND_API_KEY=
+RESEND_FROM=BizDoc AI <noreply@bizdoc-ai.com>
+ADMIN_EMAILS=admin@example.com
+CRON_SECRET=
+NEXT_PUBLIC_WHATSAPP_PHONE=
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database
 
-## Deploy on Vercel
+Run `supabase/schema.sql` in Supabase SQL Editor. If the database already exists, also run the migration comments near the bottom of that file to add:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `company_profiles.bank_info`, `company_profiles.pdf_style`
+- `clients.portal_token`
+- `generations.client_id`, `parent_id`, quote acceptance fields, and invoice status fields
+- `api_keys`
+- `document_events`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Business API
+
+Business users can create API keys from Account Settings. Use the key once it is revealed.
+
+```bash
+curl -X POST "$NEXT_PUBLIC_SITE_URL/api/generate" \
+  -H "Authorization: Bearer biz_xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "toolType": "quote",
+    "input": {
+      "companyName": "ABC Trading",
+      "clientName": "Acme Ltd",
+      "items": [{ "name": "Consulting", "quantity": 1, "unitPrice": 500 }],
+      "currency": "USD",
+      "deliveryTime": "7 business days",
+      "validUntil": "2026-06-30",
+      "notes": "",
+      "outputLanguage": "en"
+    }
+  }'
+```
+
+The response returns `{ id, output }`. Generated documents are stored in `generations`, consume quota, and can be exported as PDF through `/api/pdf/{id}` for logged-in users.
+
+## Production Notes
+
+- The app uses a local/system font stack so production builds do not depend on Google Fonts network access.
+- `GET /api/cron/overdue-invoices` should run daily with `Authorization: Bearer $CRON_SECRET`.
+- Public document views and public PDF downloads are recorded in `document_events`.
+- Production domain: `https://bizdoc-ai.com`.
+- Add the domain in Vercel, then set `NEXT_PUBLIC_SITE_URL=https://bizdoc-ai.com` for all production environments.

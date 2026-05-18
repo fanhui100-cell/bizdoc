@@ -24,6 +24,9 @@ export interface CompanyProfile {
   phone: string | null
   address: string | null
   payment_terms: string | null
+  bank_info: string | null
+  pdf_style: 'minimal' | 'business' | 'colorful'
+  logo_url: string | null
   currency: string
   updated_at: string
 }
@@ -36,17 +39,34 @@ export interface Client {
   company: string | null
   phone: string | null
   notes: string | null
+  portal_token: string | null
+  portal_expires_at: string | null
   created_at: string
 }
 
 export interface Generation {
   id: string
   user_id: string
+  client_id: string | null
   tool_type: 'quote' | 'invoice' | 'email'
   locale: Locale
   status: 'generating' | 'completed' | 'failed'
+  invoice_status: 'pending' | 'reminded' | 'paid' | 'overdue' | 'cancelled' | null
+  parent_id: string | null
+  accepted_at: string | null
+  acceptor_name: string | null
+  acceptor_email: string | null
   input_data: Record<string, unknown>
   output_data: QuoteOutput | InvoiceOutput | EmailOutput | null
+  created_at: string
+}
+
+export interface UserTemplate {
+  id: string
+  user_id: string
+  tool_type: 'quote' | 'invoice' | 'email'
+  name: string
+  input_data: Record<string, unknown>
   created_at: string
 }
 

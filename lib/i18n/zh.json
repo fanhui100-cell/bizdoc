@@ -41,6 +41,23 @@
       "ai": "AI 驱动生成",
       "bilingual": "中英双语支持"
     },
+    "howItWorks": {
+      "title": "三步生成专业文书",
+      "subtitle": "无需模板，无需学习，几秒内获得专业结果",
+      "step1": { "num": "01", "title": "填写基本信息", "desc": "输入客户名称、金额和服务内容，30 秒完成" },
+      "step2": { "num": "02", "title": "AI 自动生成", "desc": "点击生成，AI 在几秒内输出格式化专业文书" },
+      "step3": { "num": "03", "title": "复制或导出 PDF", "desc": "一键复制文本，或下载无水印 PDF 直接发给客户" }
+    },
+    "why": {
+      "title": "为什么选择企文助手",
+      "items": [
+        "专为中小企业和自由职业者设计，开箱即用",
+        "中英文双语输出，轻松应对国内外客户",
+        "报价单、Invoice、商务邮件三合一工具箱",
+        "公司资料一次保存，所有表单自动填充",
+        "免费版每月 5 次，满足日常轻度使用"
+      ]
+    },
     "cta": {
       "title": "立即开始，免费使用",
       "subtitle": "无需信用卡，注册即可获得每月 5 次免费生成次数。",
@@ -240,6 +257,33 @@
     "freeLimit": "免费版仅显示最近 3 条记录，升级 Pro 查看全部",
     "emptyState": "还没有生成记录，去试试工具吧！",
     "emptyStateCta": "立即开始"
+  },
+  "forgotPassword": {
+    "title": "重置密码",
+    "desc": "输入注册邮箱，我们将发送重置链接",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "your@email.com",
+    "sendBtn": "发送重置链接",
+    "sending": "发送中…",
+    "successTitle": "邮件已发送",
+    "successDesc": "请查收邮件，点击链接重置密码。如未收到，请检查垃圾邮件箱。",
+    "backToLogin": "返回登录",
+    "error": "发送失败，请检查邮箱地址"
+  },
+  "resetPassword": {
+    "title": "设置新密码",
+    "desc": "请输入你的新密码",
+    "passwordLabel": "新密码",
+    "passwordPlaceholder": "至少 6 位字符",
+    "confirmLabel": "确认密码",
+    "confirmPlaceholder": "再次输入密码",
+    "saveBtn": "保存新密码",
+    "saving": "保存中…",
+    "successTitle": "密码已更新",
+    "successDesc": "密码已成功重置，正在跳转…",
+    "errorMismatch": "两次输入的密码不一致",
+    "errorWeak": "密码至少需要 6 位字符",
+    "errorGeneric": "重置失败，请重新获取重置链接"
   },
   "account": {
     "title": "账户设置",

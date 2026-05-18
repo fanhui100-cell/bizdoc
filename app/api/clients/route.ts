@@ -8,7 +8,7 @@ export async function GET() {
 
   const { data, error } = await supabase
     .from('clients')
-    .select('id, name, email, company, phone, notes, created_at')
+    .select('id, name, email, company, phone, notes, portal_token, portal_expires_at, created_at')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       phone:   (body.phone   ?? '').slice(0, 50),
       notes:   (body.notes   ?? '').slice(0, 1000),
     })
-    .select('id, name, email, company, phone, notes, created_at')
+    .select('id, name, email, company, phone, notes, portal_token, portal_expires_at, created_at')
     .single()
 
   if (error) return NextResponse.json({ error: 'Failed to create client' }, { status: 500 })

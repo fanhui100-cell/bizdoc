@@ -26,19 +26,21 @@ export async function GET(
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  const { data: profile } = await supabase
-    .from('users_profile')
-    .select('plan')
-    .eq('id', user.id)
-    .single()
+  const [{ data: profile }, { data: company }] = await Promise.all([
+    supabase.from('users_profile').select('plan').eq('id', user.id).single(),
+    supabase.from('company_profiles').select('logo_url, bank_info, pdf_style').eq('user_id', user.id).single(),
+  ])
 
   const watermark = !profile?.plan || profile.plan === 'free'
+  const logoUrl   = company?.logo_url  ?? null
+  const bankInfo  = company?.bank_info  ?? null
+  const pdfStyle  = company?.pdf_style  ?? 'minimal'
 
   let element: React.ReactElement
   if (gen.tool_type === 'quote') {
-    element = React.createElement(QuotePDF, { data: gen.output_data as QuoteOutput, watermark })
+    element = React.createElement(QuotePDF, { data: gen.output_data as QuoteOutput, watermark, logoUrl, pdfStyle })
   } else if (gen.tool_type === 'invoice') {
-    element = React.createElement(InvoicePDF, { data: gen.output_data as InvoiceOutput, watermark })
+    element = React.createElement(InvoicePDF, { data: gen.output_data as InvoiceOutput, watermark, logoUrl, bankInfo, pdfStyle })
   } else {
     element = React.createElement(EmailPDF, { data: gen.output_data as EmailOutput, watermark })
   }

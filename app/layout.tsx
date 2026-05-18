@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
-import { Geist } from 'next/font/google'
 import './globals.css'
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
-
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bizdoc-ai.com'),
   title: {
     default: 'BizDoc AI / 企文助手',
     template: '%s | BizDoc AI',
@@ -15,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning className={geist.variable}>
+    <html suppressHydrationWarning>
       <body className="min-h-screen flex flex-col">{children}</body>
     </html>
   )

@@ -38,6 +38,10 @@ export async function PUT(req: NextRequest) {
         phone:         (body.phone         ?? '').slice(0, 50),
         address:       (body.address       ?? '').slice(0, 500),
         payment_terms: (body.payment_terms ?? '').slice(0, 200),
+        bank_info:     (body.bank_info     ?? '').slice(0, 2000),
+        pdf_style:     ['minimal', 'business', 'colorful'].includes(body.pdf_style)
+          ? body.pdf_style
+          : 'minimal',
         currency:      (body.currency      || 'USD').slice(0, 10),
         updated_at:    new Date().toISOString(),
       },

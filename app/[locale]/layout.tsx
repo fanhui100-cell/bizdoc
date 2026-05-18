@@ -3,13 +3,16 @@ import { notFound } from 'next/navigation'
 import { getDictionary, isValidLocale } from '@/lib/i18n'
 import Navbar from '@/components/layout/navbar'
 import Footer from '@/components/layout/footer'
+import { FloatingWhatsApp } from '@/components/ui/whatsapp-button'
+
+const WHATSAPP_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? ''
 
 type Props = {
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bizdoc.ai'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://bizdoc-ai.com'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
@@ -60,6 +63,12 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Navbar locale={locale} dict={dict} />
       <main className="flex-1">{children}</main>
       <Footer locale={locale} dict={dict} />
+      {WHATSAPP_PHONE && (
+        <FloatingWhatsApp
+          phone={WHATSAPP_PHONE}
+          message={locale === 'zh' ? '你好，我想咨询企文助手' : 'Hi, I have a question about BizDoc AI'}
+        />
+      )}
     </div>
   )
 }

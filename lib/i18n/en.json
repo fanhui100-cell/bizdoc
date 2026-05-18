@@ -41,6 +41,23 @@
       "ai": "AI powered",
       "bilingual": "Bilingual"
     },
+    "howItWorks": {
+      "title": "Three steps to professional documents",
+      "subtitle": "No templates to learn. Just fill in the basics and let AI do the rest.",
+      "step1": { "num": "01", "title": "Enter your details", "desc": "Fill in client name, amount, and service description in 30 seconds" },
+      "step2": { "num": "02", "title": "AI generates instantly", "desc": "Click generate and get a formatted, professional document in seconds" },
+      "step3": { "num": "03", "title": "Copy or export PDF", "desc": "Copy the text or download a clean PDF to send directly to your client" }
+    },
+    "why": {
+      "title": "Why BizDoc AI",
+      "items": [
+        "Built for freelancers and small businesses — ready to use instantly",
+        "Bilingual output in Chinese and English for local and international clients",
+        "Three tools in one: quotes, invoices, and business emails",
+        "Save your company profile once, auto-fill every form",
+        "Free tier includes 5 generations per month for casual use"
+      ]
+    },
     "cta": {
       "title": "Start today, no credit card required",
       "subtitle": "Sign up free and get 5 document generations per month.",
@@ -240,6 +257,33 @@
     "freeLimit": "Free plan shows only the last 3 records. Upgrade to Pro for full history.",
     "emptyState": "No generations yet. Try one of the tools!",
     "emptyStateCta": "Get Started"
+  },
+  "forgotPassword": {
+    "title": "Reset Password",
+    "desc": "Enter your registered email and we'll send you a reset link",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "sendBtn": "Send Reset Link",
+    "sending": "Sending…",
+    "successTitle": "Email Sent",
+    "successDesc": "Check your inbox and click the link to reset your password. If you don't see it, check your spam folder.",
+    "backToLogin": "Back to Login",
+    "error": "Failed to send. Please check your email address."
+  },
+  "resetPassword": {
+    "title": "Set New Password",
+    "desc": "Enter your new password below",
+    "passwordLabel": "New Password",
+    "passwordPlaceholder": "At least 6 characters",
+    "confirmLabel": "Confirm Password",
+    "confirmPlaceholder": "Re-enter password",
+    "saveBtn": "Save New Password",
+    "saving": "Saving…",
+    "successTitle": "Password Updated",
+    "successDesc": "Your password has been reset successfully. Redirecting…",
+    "errorMismatch": "Passwords do not match",
+    "errorWeak": "Password must be at least 6 characters",
+    "errorGeneric": "Reset failed. Please request a new reset link."
   },
   "account": {
     "title": "Account Settings",

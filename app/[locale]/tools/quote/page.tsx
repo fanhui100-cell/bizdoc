@@ -1,8 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { OutputCard } from '@/components/tools/output-card'
+import { ClientSuggestInput } from '@/components/ui/client-suggest-input'
+import { FileExtractButton } from '@/components/ui/file-extract-button'
+import { TemplatePicker } from '@/components/ui/template-picker'
 import type { QuoteOutput } from '@/lib/types'
 
 interface LineItem {
@@ -10,6 +13,11 @@ interface LineItem {
   description: string
   quantity: number
   unitPrice: number
+}
+
+interface SelectedClient {
+  id: string
+  email: string | null
 }
 
 const CURRENCIES = ['CNY', 'USD', 'EUR', 'GBP', 'HKD']
@@ -22,10 +30,14 @@ export default function QuotePage() {
   const params = useParams()
   const locale = (params.locale as string) ?? 'zh'
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const [outputLang, setOutputLang] = useState<'zh' | 'en'>(locale === 'zh' ? 'zh' : 'en')
+  const [parentId, setParentId] = useState<string | null>(null)
   const [companyName, setCompanyName] = useState('')
   const [clientName, setClientName] = useState('')
+  const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
+  const [quoteNumber, setQuoteNumber] = useState(`QT-${Date.now().toString().slice(-6)}`)
   const [currency, setCurrency] = useState('USD')
   const [deliveryTime, setDeliveryTime] = useState('')
   const [validUntil, setValidUntil] = useState('')
@@ -37,10 +49,12 @@ export default function QuotePage() {
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState<QuoteOutput | null>(null)
   const [genId, setGenId] = useState<string | null>(null)
+  const [lastInput, setLastInput] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const zh = locale === 'zh'
 
+  // Load company profile defaults
   useEffect(() => {
     fetch('/api/company-profile')
       .then((r) => r.json())
@@ -52,8 +66,54 @@ export default function QuotePage() {
       .catch(() => {})
   }, [])
 
+  // Pre-fill from a previous generation (?from=<id>)
+  useEffect(() => {
+    const fromId = searchParams.get('from')
+    if (!fromId) return
+    fetch(`/api/generations/${fromId}`)
+      .then((r) => r.json())
+      .then(({ generation }) => {
+        if (!generation || generation.tool_type !== 'quote') return
+        const d = generation.input_data as Record<string, unknown>
+        if (d.companyName)   setCompanyName(d.companyName as string)
+        if (d.clientName)    setClientName(d.clientName as string)
+        if (d.quoteNumber)   setQuoteNumber(d.quoteNumber as string)
+        if (d.currency)      setCurrency(d.currency as string)
+        if (d.deliveryTime)  setDeliveryTime(d.deliveryTime as string)
+        if (d.validUntil)    setValidUntil(d.validUntil as string)
+        if (d.notes)         setNotes(d.notes as string)
+        if (d.itemsText)     { setItemsText(d.itemsText as string); setTextMode(true) }
+        else if (Array.isArray(d.items) && d.items.length > 0) setItems(d.items as LineItem[])
+        if (d.outputLanguage) setOutputLang(d.outputLanguage as 'zh' | 'en')
+        if (generation.client_id) setSelectedClient({ id: generation.client_id as string, email: null })
+        setParentId(fromId)
+      })
+      .catch(() => {})
+  }, [searchParams])
+
   const updateItem = (i: number, field: keyof LineItem, value: string | number) => {
     setItems((prev) => prev.map((item, idx) => (idx === i ? { ...item, [field]: value } : item)))
+  }
+
+  const applyExtracted = (data: Record<string, unknown>) => {
+    if (data.companyName)   setCompanyName(data.companyName as string)
+    if (data.clientName)    setClientName(data.clientName as string)
+    if (data.quoteNumber)   setQuoteNumber(data.quoteNumber as string)
+    if (data.currency)      setCurrency(data.currency as string)
+    if (data.deliveryTime)  setDeliveryTime(data.deliveryTime as string)
+    if (data.validUntil)    setValidUntil(data.validUntil as string)
+    if (data.notes)         setNotes(data.notes as string)
+    if (data.outputLanguage) setOutputLang(data.outputLanguage as 'zh' | 'en')
+    if (data.itemsText)     { setItemsText(data.itemsText as string); setTextMode(true) }
+    else if (Array.isArray(data.items) && data.items.length > 0) {
+      setTextMode(false)
+      setItems((data.items as Record<string, unknown>[]).map((it) => ({
+        name:        String(it.name ?? ''),
+        description: String(it.description ?? ''),
+        quantity:    Number(it.quantity ?? 1),
+        unitPrice:   Number(it.unitPrice ?? 0),
+      })))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,6 +125,7 @@ export default function QuotePage() {
     const input = {
       companyName,
       clientName,
+      quoteNumber,
       items: textMode ? [] : items,
       itemsText: textMode ? itemsText : undefined,
       currency,
@@ -78,7 +139,12 @@ export default function QuotePage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ toolType: 'quote', input }),
+        body: JSON.stringify({
+          toolType: 'quote',
+          input,
+          ...(parentId ? { parentId } : {}),
+          ...(selectedClient ? { clientId: selectedClient.id } : {}),
+        }),
       })
 
       if (res.status === 401) {
@@ -99,6 +165,8 @@ export default function QuotePage() {
 
       setOutput(data.output as QuoteOutput)
       setGenId(data.id ?? null)
+      setLastInput(input as Record<string, unknown>)
+      window.dispatchEvent(new CustomEvent('quotaUpdated'))
     } catch {
       setError(zh ? '网络错误，请重试' : 'Network error. Please try again.')
     } finally {
@@ -108,11 +176,26 @@ export default function QuotePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{zh ? '报价单生成器' : 'Quote Generator'}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {zh ? '输入基础信息，AI 自动生成专业报价单' : 'Fill in the details and let AI generate a professional quote.'}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{zh ? '报价单生成器' : 'Quote Generator'}</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {zh ? '输入基础信息，AI 自动生成专业报价单' : 'Fill in the details and let AI generate a professional quote.'}
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <TemplatePicker toolType="quote" onLoad={applyExtracted} zh={zh} />
+            <FileExtractButton toolType="quote" onExtracted={applyExtracted} zh={zh} />
+          </div>
+          <a
+            href="/api/templates/quote"
+            download
+            className="text-xs text-gray-400 hover:text-indigo-600 hover:underline"
+          >
+            {zh ? '下载空白模板' : 'Blank template'}
+          </a>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -139,9 +222,19 @@ export default function QuotePage() {
             <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} required
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
+          <ClientSuggestInput
+            value={clientName}
+            onChange={(value) => {
+              setClientName(value)
+              setSelectedClient(null)
+            }}
+            onClientSelected={(client) => setSelectedClient(client ? { id: client.id, email: client.email } : null)}
+            label={zh ? '客户名称' : 'Client Name'}
+            placeholder={zh ? '输入或从客户列表中选择' : 'Type or select from client book'}
+          />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? '客户名称' : 'Client Name'}</label>
-            <input value={clientName} onChange={(e) => setClientName(e.target.value)} required
+            <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? '报价编号' : 'Quote #'}</label>
+            <input value={quoteNumber} onChange={(e) => setQuoteNumber(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
           </div>
           <div>
@@ -239,6 +332,9 @@ export default function QuotePage() {
           copiedLabel={zh ? '已复制！' : 'Copied!'}
           pdfLabel={zh ? '导出 PDF' : 'Export PDF'}
           genId={genId}
+          zh={zh}
+          inputData={lastInput ?? undefined}
+          defaultRecipient={selectedClient?.email ?? ''}
         />
       )}
     </div>

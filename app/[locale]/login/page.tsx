@@ -74,12 +74,15 @@ export default function LoginPage({ params }: { params: Promise<{ locale: string
   }
 
   const handleGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/api/auth/callback?next=/${safeLocale}/dashboard`,
+        skipBrowserRedirect: true,
       },
     })
+    if (error) { setError(error.message); return }
+    if (data?.url) window.location.href = data.url
   }
 
   return (
@@ -183,7 +186,7 @@ export default function LoginPage({ params }: { params: Promise<{ locale: string
 
           {tab === 'login' && (
             <p className="mt-4 text-center text-xs text-gray-400 hover:text-gray-600">
-              <Link href={`/${safeLocale}/login`}>{t.forgotPassword}</Link>
+              <Link href={`/${safeLocale}/forgot-password`}>{t.forgotPassword}</Link>
             </p>
           )}
         </div>

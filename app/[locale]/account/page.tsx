@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getDictionary } from '@/lib/i18n'
 import { CompanyProfileForm } from '@/components/account/company-profile-form'
+import { PasswordChangeForm } from '@/components/account/password-change-form'
+import { DeleteAccountButton } from '@/components/account/delete-account-button'
+import { ApiKeysPanel } from '@/components/account/api-keys-panel'
 
 interface Props {
   params: Promise<{ locale: string }>
@@ -99,6 +102,17 @@ export default async function AccountPage({ params }: Props) {
         </Link>
       </section>
 
+      {/* Danger zone */}
+      <section className="rounded-xl border border-red-100 bg-red-50 px-5 py-4 flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-red-800">{zh ? '危险操作' : 'Danger Zone'}</p>
+          <p className="text-xs text-red-400 mt-0.5">
+            {zh ? '注销后所有数据将被永久删除，不可恢复' : 'All data will be permanently deleted and cannot be recovered'}
+          </p>
+        </div>
+        <DeleteAccountButton zh={zh} locale={locale} />
+      </section>
+
       {/* Language */}
       <section className="rounded-xl border border-gray-200 bg-white px-5 py-4 flex items-center justify-between">
         <div>
@@ -111,6 +125,16 @@ export default async function AccountPage({ params }: Props) {
         >
           {a.changeLocale} → {otherLocale === 'zh' ? '中文' : 'English'}
         </Link>
+      </section>
+
+      {/* API Keys */}
+      <section className="rounded-xl border border-gray-200 bg-white px-5 py-4">
+        <ApiKeysPanel zh={zh} plan={plan} />
+      </section>
+
+      {/* Password change */}
+      <section className="rounded-xl border border-gray-200 bg-white divide-y divide-gray-100">
+        <PasswordChangeForm zh={zh} />
       </section>
 
       {/* Upgrade */}

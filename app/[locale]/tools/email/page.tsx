@@ -1,23 +1,32 @@
 'use client'
 
-import { useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { OutputCard } from '@/components/tools/output-card'
+import { ClientSuggestInput } from '@/components/ui/client-suggest-input'
+import { TemplatePicker } from '@/components/ui/template-picker'
 import type { EmailOutput } from '@/lib/types'
 
 const EMAIL_TYPES_ZH = ['报价邮件', '催款邮件', '客户跟进', '项目交付', '道歉邮件', '合作邀约', '客户确认']
 const EMAIL_TYPES_EN = ['Quote Email', 'Payment Reminder', 'Follow Up', 'Project Delivery', 'Apology', 'Partnership Inquiry', 'Client Confirmation']
 const EMAIL_TYPE_VALUES = ['quote', 'payment_reminder', 'follow_up', 'delivery', 'apology', 'cooperation', 'confirmation']
 
+interface SelectedClient {
+  id: string
+  email: string | null
+}
+
 export default function EmailPage() {
   const params = useParams()
   const locale = (params.locale as string) ?? 'zh'
   const router = useRouter()
+  const searchParams = useSearchParams()
   const zh = locale === 'zh'
 
   const [outputLang, setOutputLang] = useState<'zh' | 'en'>(zh ? 'zh' : 'en')
   const [emailTypeIdx, setEmailTypeIdx] = useState(0)
   const [recipientName, setRecipientName] = useState('')
+  const [selectedClient, setSelectedClient] = useState<SelectedClient | null>(null)
   const [senderRole, setSenderRole] = useState('')
   const [purpose, setPurpose] = useState('')
   const [keyMessage, setKeyMessage] = useState('')
@@ -26,7 +35,44 @@ export default function EmailPage() {
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState<EmailOutput | null>(null)
   const [genId, setGenId] = useState<string | null>(null)
+  const [lastInput, setLastInput] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fromId = searchParams.get('from')
+    if (!fromId) return
+    fetch(`/api/generations/${fromId}`)
+      .then((r) => r.json())
+      .then(({ generation }) => {
+        if (!generation || generation.tool_type !== 'email') return
+        const d = generation.input_data as Record<string, unknown>
+        if (d.recipientName) setRecipientName(d.recipientName as string)
+        if (d.senderRole)    setSenderRole(d.senderRole as string)
+        if (d.purpose)       setPurpose(d.purpose as string)
+        if (d.keyMessage)    setKeyMessage(d.keyMessage as string)
+        if (d.tone)          setTone(d.tone as 'formal' | 'friendly' | 'concise')
+        if (d.emailType) {
+          const idx = EMAIL_TYPE_VALUES.indexOf(d.emailType as string)
+          if (idx >= 0) setEmailTypeIdx(idx)
+        }
+        if (d.outputLanguage) setOutputLang(d.outputLanguage as 'zh' | 'en')
+        if (generation.client_id) setSelectedClient({ id: generation.client_id as string, email: null })
+      })
+      .catch(() => {})
+  }, [searchParams])
+
+  const applyTemplate = (data: Record<string, unknown>) => {
+    if (data.recipientName) setRecipientName(data.recipientName as string)
+    if (data.senderRole)    setSenderRole(data.senderRole as string)
+    if (data.purpose)       setPurpose(data.purpose as string)
+    if (data.keyMessage)    setKeyMessage(data.keyMessage as string)
+    if (data.tone)          setTone(data.tone as 'formal' | 'friendly' | 'concise')
+    if (data.emailType) {
+      const idx = EMAIL_TYPE_VALUES.indexOf(data.emailType as string)
+      if (idx >= 0) setEmailTypeIdx(idx)
+    }
+    if (data.outputLanguage) setOutputLang(data.outputLanguage as 'zh' | 'en')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,7 +94,11 @@ export default function EmailPage() {
       const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ toolType: 'email', input }),
+        body: JSON.stringify({
+          toolType: 'email',
+          input,
+          ...(selectedClient ? { clientId: selectedClient.id } : {}),
+        }),
       })
 
       if (res.status === 401) { router.push(`/${locale}/login`); return }
@@ -64,6 +114,8 @@ export default function EmailPage() {
 
       setOutput(data.output as EmailOutput)
       setGenId(data.id ?? null)
+      setLastInput(input as Record<string, unknown>)
+      window.dispatchEvent(new CustomEvent('quotaUpdated'))
     } catch {
       setError(zh ? '网络错误，请重试' : 'Network error. Please try again.')
     } finally {
@@ -73,11 +125,16 @@ export default function EmailPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{zh ? '商务邮件生成器' : 'Business Email Generator'}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {zh ? '选择邮件类型，输入要点，AI 生成专业邮件' : 'Choose a type, fill in the key points, and let AI draft your email.'}
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{zh ? '商务邮件生成器' : 'Business Email Generator'}</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {zh ? '选择邮件类型，输入要点，AI 生成专业邮件' : 'Choose a type, fill in the key points, and let AI draft your email.'}
+          </p>
+        </div>
+        <div className="shrink-0 pt-1">
+          <TemplatePicker toolType="email" onLoad={applyTemplate} zh={zh} />
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -110,12 +167,16 @@ export default function EmailPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? '收件人称呼' : 'Recipient Name'}</label>
-            <input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required
-              placeholder={zh ? '如：张总、李经理' : 'e.g. Mr. Smith, the team'}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-          </div>
+          <ClientSuggestInput
+            value={recipientName}
+            onChange={(value) => {
+              setRecipientName(value)
+              setSelectedClient(null)
+            }}
+            onClientSelected={(client) => setSelectedClient(client ? { id: client.id, email: client.email } : null)}
+            label={zh ? '收件人称呼' : 'Recipient Name'}
+            placeholder={zh ? '如：张总、李经理' : 'e.g. Mr. Smith, the team'}
+          />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{zh ? '你的身份 / 公司' : 'Your Role / Company'}</label>
             <input value={senderRole} onChange={(e) => setSenderRole(e.target.value)} required
@@ -164,7 +225,8 @@ export default function EmailPage() {
       {output && (
         <OutputCard toolType="email" output={output}
           copyLabel={zh ? '复制' : 'Copy'} copiedLabel={zh ? '已复制！' : 'Copied!'}
-          pdfLabel={zh ? '导出 PDF' : 'Export PDF'} genId={genId} />
+          pdfLabel={zh ? '导出 PDF' : 'Export PDF'} genId={genId}
+          zh={zh} inputData={lastInput ?? undefined} defaultRecipient={selectedClient?.email ?? ''} />
       )}
     </div>
   )

@@ -28,16 +28,25 @@ export default function Navbar({ locale, dict }: NavbarProps) {
     return () => subscription.unsubscribe()
   }, [])
 
-  useEffect(() => {
-    if (!user) { setQuota(null); return }
-    supabase
+  const fetchQuota = async (uid: string) => {
+    const { data } = await supabase
       .from('users_profile')
       .select('quota_used, quota_monthly')
-      .eq('id', user.id)
+      .eq('id', uid)
       .single()
-      .then(({ data }) => {
-        if (data) setQuota({ used: data.quota_used, monthly: data.quota_monthly })
-      })
+    if (data) setQuota({ used: data.quota_used, monthly: data.quota_monthly })
+  }
+
+  useEffect(() => {
+    if (!user) { setQuota(null); return }
+    fetchQuota(user.id)
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    const handler = () => fetchQuota(user.id)
+    window.addEventListener('quotaUpdated', handler)
+    return () => window.removeEventListener('quotaUpdated', handler)
   }, [user])
 
   const otherLocale: Locale = locale === 'zh' ? 'en' : 'zh'
@@ -113,6 +122,12 @@ export default function Navbar({ locale, dict }: NavbarProps) {
                   {dict.nav.dashboard}
                 </Link>
                 <Link
+                  href={`/${locale}/clients`}
+                  className="hidden sm:block text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100"
+                >
+                  {locale === 'zh' ? '客户' : 'Clients'}
+                </Link>
+                <Link
                   href={`/${locale}/account`}
                   className="hidden sm:block text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100"
                 >
@@ -179,6 +194,9 @@ export default function Navbar({ locale, dict }: NavbarProps) {
               <div className="flex items-center gap-3">
                 <Link href={`/${locale}/dashboard`} onClick={() => setMenuOpen(false)} className="text-sm text-gray-600">
                   {dict.nav.dashboard}
+                </Link>
+                <Link href={`/${locale}/clients`} onClick={() => setMenuOpen(false)} className="text-sm text-gray-600">
+                  {locale === 'zh' ? '客户' : 'Clients'}
                 </Link>
                 <button onClick={handleLogout} className="text-sm text-gray-500">
                   {dict.nav.logout}
