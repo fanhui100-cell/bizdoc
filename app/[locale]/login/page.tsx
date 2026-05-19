@@ -74,10 +74,11 @@ export default function LoginPage({ params }: { params: Promise<{ locale: string
   }
 
   const handleGoogle = async () => {
+    const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, '')
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/${safeLocale}/dashboard`,
+        redirectTo: `${siteOrigin}/api/auth/callback?next=/${safeLocale}/dashboard`,
         skipBrowserRedirect: true,
       },
     })

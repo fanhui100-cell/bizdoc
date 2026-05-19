@@ -3,14 +3,14 @@
 import { useState } from 'react'
 
 const SUPPORT_EMAIL = 'fanhui100@gmail.com'
+const SUPPORT_WECHAT = 'bestfrankie_ever'
+const CONTACT_TEXT = `Email: ${SUPPORT_EMAIL}\nWeChat: ${SUPPORT_WECHAT}`
 
 export function ContactButton({ label }: { label: string }) {
   const [state, setState] = useState<'idle' | 'copied'>('idle')
 
   const handle = () => {
-    navigator.clipboard.writeText(SUPPORT_EMAIL).catch(() => {})
-    // Also attempt mailto — works if an email client is configured
-    window.location.href = `mailto:${SUPPORT_EMAIL}`
+    navigator.clipboard.writeText(CONTACT_TEXT).catch(() => {})
     setState('copied')
     setTimeout(() => setState('idle'), 2500)
   }
@@ -18,12 +18,17 @@ export function ContactButton({ label }: { label: string }) {
   return (
     <button
       onClick={handle}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
     >
       {state === 'copied' ? (
-        <>✅ {SUPPORT_EMAIL} — 已复制</>
+        <>联系方式已复制</>
       ) : (
-        <>✉️ {label}<span className="text-gray-400 ml-1 text-xs hidden sm:inline">({SUPPORT_EMAIL})</span></>
+        <>
+          {label}
+          <span className="ml-1 hidden text-xs text-gray-400 sm:inline">
+            ({SUPPORT_EMAIL} / {SUPPORT_WECHAT})
+          </span>
+        </>
       )}
     </button>
   )

@@ -142,12 +142,11 @@ export default async function PrivacyPage({ params }: Props) {
           </h2>
           <p>
             {zh
-              ? '如有任何隐私相关问题，请发邮件至：'
-              : 'For any privacy-related questions, please email:'}
+              ? '如有任何隐私相关问题，请联系：'
+              : 'For any privacy-related questions, contact:'}
             {' '}
-            <a href="mailto:fanhui100@gmail.com" className="text-primary hover:underline">
-              fanhui100@gmail.com
-            </a>
+            <span className="font-medium text-gray-900">fanhui100@gmail.com</span>
+            <span className="ml-3">{zh ? '微信：' : 'WeChat: '}bestfrankie_ever</span>
           </p>
         </section>
 

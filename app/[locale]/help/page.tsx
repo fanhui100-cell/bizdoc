@@ -142,15 +142,13 @@ export default async function HelpPage({ params }: Props) {
         <h2 className="text-base font-semibold text-indigo-900">{zh ? '还有问题？联系我们' : 'Still have questions?'}</h2>
         <p className="text-sm text-indigo-700">
           {zh
-            ? '如果以上内容没有解答你的问题，欢迎通过邮件联系我们，我们将在 1 个工作日内回复。'
-            : 'If you cannot find the answer above, feel free to reach out by email. We typically respond within one business day.'}
+            ? '如果以上内容没有解答你的问题，欢迎通过邮箱或微信联系我们，我们将在 1 个工作日内回复。'
+            : 'If you cannot find the answer above, reach out by email or WeChat. We typically respond within one business day.'}
         </p>
-        <a
-          href="mailto:fanhui100@gmail.com"
-          className="inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
-        >
-          {zh ? '发送邮件' : 'Email Support'}
-        </a>
+        <div className="rounded-lg bg-white/70 px-4 py-3 text-sm text-indigo-900">
+          <p>{zh ? '客服邮箱：' : 'Support email: '}fanhui100@gmail.com</p>
+          <p>{zh ? '客服微信：' : 'WeChat: '}bestfrankie_ever</p>
+        </div>
       </div>
 
       {/* Legal links */}
