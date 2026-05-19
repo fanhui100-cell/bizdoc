@@ -28,6 +28,15 @@ function getPreferredLocale(request: NextRequest): Locale {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Let crawlers and ownership verification requests hit their files directly.
+  if (
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
+    /^\/baidu_verify_.*\.html$/.test(pathname)
+  ) {
+    return NextResponse.next()
+  }
+
   // Skip static files and Next.js internals
   if (
     pathname.startsWith('/_next') ||
