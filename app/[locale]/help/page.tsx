@@ -146,7 +146,7 @@ export default async function HelpPage({ params }: Props) {
             : 'If you cannot find the answer above, feel free to reach out by email. We typically respond within one business day.'}
         </p>
         <a
-          href="mailto:support@bizdoc-ai.com"
+          href="mailto:fanhui100@gmail.com"
           className="inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
         >
           {zh ? '发送邮件' : 'Email Support'}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-const SUPPORT_EMAIL = 'support@bizdoc-ai.com'
+const SUPPORT_EMAIL = 'fanhui100@gmail.com'
 
 export function ContactButton({ label }: { label: string }) {
   const [state, setState] = useState<'idle' | 'copied'>('idle')
